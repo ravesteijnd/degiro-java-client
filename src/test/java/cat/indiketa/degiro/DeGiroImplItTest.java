@@ -219,14 +219,14 @@ class DeGiroImplItTest {
     }
 
     @Test
-    void marketOrder() throws DeGiroException {
+    void marketOrderSell() throws DeGiroException {
         //given
         setupLoginResponse();
         prepareResponse()
                 .setUri("v5/checkOrder;jsessionid=111111111111111111111111111111.prod_b_112_2?intAccount=6000001&sessionId=111111111111111111111111111111.prod_b_112_2")
                 .setMethod("POST")
                 .setData(data -> new Gson().toJson(data).equals("{\"orderType\":2,\"buySell\":\"SELL\",\"productId\":\"11112222\",\"size\":1,\"timeType\":1}"))
-                .andReply(200, "{\"data\":{\"confirmationId\":\"11caa4dd-c1f2-4c0a-b1c2-e6f21c04a4be\",\"transactionFee\":0.50,\"showExAnteReportLink\":true}}");
+                .andReply(200, "{\"data\":{\"confirmationId\":\"11caa4dd-c1f2-4c0a-b1c2-e6f21c04a4be\",\"transactionOppositeFee\":0.50,\"showExAnteReportLink\":true}}");
         prepareResponse()
                 .setUri("v5/checkOrder;jsessionid=111111111111111111111111111111.prod_b_112_2?intAccount=6000001&sessionId=111111111111111111111111111111.prod_b_112_2")
                 .setMethod("POST")
@@ -243,6 +243,41 @@ class DeGiroImplItTest {
                 null)));
         //when/then
         final DOrderConfirmation dOrderConfirmation = deGiro.checkOrder(new DNewOrder(DOrderAction.SELL,
+                DOrderType.MARKET_ORDER,
+                DOrderTime.DAY,
+                "11112222",
+                1,
+                null,
+                null));
+        assertEquals("11caa4dd-c1f2-4c0a-b1c2-e6f21c04a4be", dOrderConfirmation.getConfirmationId());
+
+    }
+
+    @Test
+    void marketOrderBuy() throws DeGiroException {
+        //given
+        setupLoginResponse();
+        prepareResponse()
+                .setUri("v5/checkOrder;jsessionid=111111111111111111111111111111.prod_b_112_2?intAccount=6000001&sessionId=111111111111111111111111111111.prod_b_112_2")
+                .setMethod("POST")
+                .setData(data -> new Gson().toJson(data).equals("{\"orderType\":2,\"buySell\":\"BUY\",\"productId\":\"11112222\",\"size\":1,\"timeType\":1}"))
+                .andReply(200, "{\"data\":{\"confirmationId\":\"11caa4dd-c1f2-4c0a-b1c2-e6f21c04a4be\",\"transactionFee\":0.50,\"showExAnteReportLink\":true}}");
+        prepareResponse()
+                .setUri("v5/checkOrder;jsessionid=111111111111111111111111111111.prod_b_112_2?intAccount=6000001&sessionId=111111111111111111111111111111.prod_b_112_2")
+                .setMethod("POST")
+                .setData(data -> new Gson().toJson(data).equals("{\"orderType\":2,\"buySell\":\"BUY\",\"productId\":\"999999\",\"size\":1,\"timeType\":1}"))
+                .andReply(300, "");
+        //when/then
+        //this should fail because of return code 300
+        assertThrows(DeGiroException.class, () ->  deGiro.checkOrder(new DNewOrder(DOrderAction.BUY,
+                DOrderType.MARKET_ORDER,
+                DOrderTime.DAY,
+                "999999",
+                1,
+                null,
+                null)));
+        //when/then
+        final DOrderConfirmation dOrderConfirmation = deGiro.checkOrder(new DNewOrder(DOrderAction.BUY,
                 DOrderType.MARKET_ORDER,
                 DOrderTime.DAY,
                 "11112222",
