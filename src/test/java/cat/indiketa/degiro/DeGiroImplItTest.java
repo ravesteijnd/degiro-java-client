@@ -226,7 +226,7 @@ class DeGiroImplItTest {
                 .setUri("v5/checkOrder;jsessionid=111111111111111111111111111111.prod_b_112_2?intAccount=6000001&sessionId=111111111111111111111111111111.prod_b_112_2")
                 .setMethod("POST")
                 .setData(data -> new Gson().toJson(data).equals("{\"orderType\":2,\"buySell\":\"SELL\",\"productId\":\"11112222\",\"size\":1,\"timeType\":1}"))
-                .andReply(200, "{\"data\":{\"confirmationId\":\"11caa4dd-c1f2-4c0a-b1c2-e6f21c04a4be\",\"transactionFees\":[{\"id\":2,\"amount\":0.04,\"currency\":\"USD\"},{\"id\":3,\"amount\":0.50,\"currency\":\"EUR\"}]}}");
+                .andReply(200, "{\"data\":{\"confirmationId\":\"11caa4dd-c1f2-4c0a-b1c2-e6f21c04a4be\",\"transactionFee\":0.50,\"showExAnteReportLink\":true}}");
         prepareResponse()
                 .setUri("v5/checkOrder;jsessionid=111111111111111111111111111111.prod_b_112_2?intAccount=6000001&sessionId=111111111111111111111111111111.prod_b_112_2")
                 .setMethod("POST")
