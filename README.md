@@ -27,7 +27,7 @@ Add [jitpack.io](https://jitpack.io/) repository:
 Add dependency:
 ```
 <dependency>
-    <groupId>com.github.pcmind</groupId>
+    <groupId>com.github.ravesteijnd</groupId>
     <artifactId>degiro-java-client</artifactId>
     <version>master-SNAPSHOT</version>
 </dependency>
